@@ -4,7 +4,27 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    #region Variables
+    public static GameManager instance;
+    #endregion Variables
+
+    //Prefabs
+
+    // Game States
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+        // Start is called before the first frame update
     void Start()
     {
         

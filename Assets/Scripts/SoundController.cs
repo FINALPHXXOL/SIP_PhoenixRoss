@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -41,6 +42,8 @@ public class SoundController : MonoBehaviour
             }
 
             settings.activeImage = Instantiate(settings.image, canvas.transform);
+            settings.imageSize = settings.activeImage.rectTransform.sizeDelta;
+
         }
     }
 
@@ -51,28 +54,40 @@ public class SoundController : MonoBehaviour
             AudioListener nearestListener = FindNearestAudioListener();
             float distance = Vector3.Distance(settings.audioSource.transform.position, nearestListener.transform.position);
             bool isWithinMaxDistance = distance < settings.maxDistance;
-            if (settings.activeImage != null && !isWithinMaxDistance)
+            if (settings.activeImage != null && (!isWithinMaxDistance || !settings.audioSource.isPlaying || settings.audioSource.mute == true))
             {
                 // Deactivate the image
                 Destroy(settings.activeImage.gameObject);
-                settings.imageIsActive = false;
             }
-            else if (settings.activeImage == null && isWithinMaxDistance)
+            else if (settings.activeImage == null && (isWithinMaxDistance && settings.audioSource.isPlaying && settings.audioSource.mute == false))
             {
                 // Instantiate the image prefab
                 settings.activeImage = Instantiate(settings.image, canvas.transform);
-                settings.imageIsActive = true;
+                settings.imageSize = settings.activeImage.rectTransform.sizeDelta;
+
             }
-            if (settings.audioSource != null || settings.activeImage != null)
+            if (settings.audioSource != null && settings.activeImage != null)
             {
-                CalculateOpacity(settings);
-                CalculateImageSizeBasedOnDistance(settings);
+                if (settings.calculateDistanceOpacity == true)
+                {
+                    CalculateOpacityBasedOnDistance(settings);
+                } else
+                {
+                    CalculateOpacityBasedOnVolume(settings);
+                }
+                if (settings.calculateImageSizeBasedOnVolume == true)
+                {
+                    CalculateImageSizeBasedOnVolume(settings);
+                } else
+                {
+                    CalculateImageSizeBasedOnDistance(settings);
+                }
                 WaypointIndicator(settings);
             }
         }
     }
 
-    private void CalculateOpacity(AudioSettings settings)
+    private void CalculateOpacityBasedOnVolume(AudioSettings settings)
     {
         float[] samples = new float[256];
         AudioListener.GetOutputData(samples, 1); // Use channel 1 (1-based index) for the custom mixer group
@@ -89,6 +104,38 @@ public class SoundController : MonoBehaviour
         float opacity = Mathf.Lerp(settings.minOpacity, settings.maxOpacity, Mathf.InverseLerp(-80f, 0f, decibels));
         Color newColor = new Color(settings.originalColor.r, settings.originalColor.g, settings.originalColor.b, opacity);
         settings.activeImage.color = newColor;
+    }
+
+    private void CalculateOpacityBasedOnDistance(AudioSettings settings)
+    {
+        AudioListener nearestListener = FindNearestAudioListener();
+
+        float distance = Vector3.Distance(settings.audioSource.transform.position, nearestListener.transform.position);
+
+        // Calculate opacity based on distance
+        float opacityMultiplier = Mathf.InverseLerp(settings.maxDistance, 0f, distance);
+        float opacity = Mathf.Lerp(settings.minOpacity, settings.maxOpacity, opacityMultiplier);
+
+        Color newColor = new Color(settings.originalColor.r, settings.originalColor.g, settings.originalColor.b, opacity);
+        settings.activeImage.color = newColor;
+    }
+
+    private void CalculateImageSizeBasedOnVolume(AudioSettings settings)
+    {
+        float[] samples = new float[256];
+        AudioListener.GetOutputData(samples, 1); // Use channel 1 (1-based index) for the custom mixer group
+
+        float sum = 0f;
+        foreach (float sample in samples)
+        {
+            sum += sample * sample;
+        }
+
+        float rms = Mathf.Sqrt(sum / samples.Length);
+        float decibels = 20f * Mathf.Log10(rms * settings.rmsMultiplier);
+
+        float imageSize = Mathf.Lerp(settings.minSize, settings.maxSize, Mathf.InverseLerp(-80f, 0f, decibels));
+        settings.activeImage.rectTransform.sizeDelta = new Vector2(imageSize, imageSize);
     }
 
     private void CalculateImageSizeBasedOnDistance(AudioSettings settings)
@@ -114,8 +161,8 @@ public class SoundController : MonoBehaviour
 
         if (Vector3.Dot((settings.audioSource.transform.position - Camera.main.transform.position), Camera.main.transform.TransformDirection(Vector3.forward)) < 0) 
         {
-            print(settings.name + " " + pos.x);
-            print("Screen Width" + Screen.width);
+            //print(settings.name + " " + pos.x);
+            //print("Screen Width" + Screen.width);
             //Source is behind player
             if (pos.x < Screen.width / 2)
             {
@@ -126,8 +173,6 @@ public class SoundController : MonoBehaviour
                 pos.x = minX;
             }
         }
-
-        settings.test = Vector3.Dot((settings.audioSource.transform.position - Camera.main.transform.position), Camera.main.transform.InverseTransformDirection(Vector3.forward));
 
         pos.x = Mathf.Clamp(pos.x, minX, maxX);
         pos.y = Mathf.Clamp(pos.y, minY, maxY);
@@ -156,15 +201,18 @@ public class AudioSettings
     public Image image;
     public AudioMixerGroup mixerGroup;
     public Vector3 offset;
-    public float test;
     public float minOpacity = 0.2f;
     public float maxOpacity = 1.0f;
     public float maxDistance;
     public float rmsMultiplier = 50f;
     public float maxSize = 200f;
     public float minSize = 100f;
+    public bool calculateDistanceOpacity;
+    public bool calculateImageSizeBasedOnVolume;
     [HideInInspector]
     public Color originalColor;
-    public bool imageIsActive;
+    [HideInInspector]
     public Image activeImage;
+    [HideInInspector]
+    public Vector2 imageSize;
 }

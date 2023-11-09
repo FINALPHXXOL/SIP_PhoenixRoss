@@ -1,49 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.Rendering;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
+public class ReadOnlyAttribute : PropertyAttribute { }
 public class SoundController : MonoBehaviour
 {
     public AudioSettings[] audioSettings;
     public Canvas canvas;
+    public List<MixerGroupData> mixerGroupsData;
 
     private void Start()
     {
         foreach (var settings in audioSettings)
         {
-            settings.mixerGroup = settings.audioSource.outputAudioMixerGroup;
-            settings.maxDistance = settings.audioSource.maxDistance;
-            settings.originalColor = settings.image.color;
-            if (settings.audioSource != null && settings.audioSource.clip != null)
-            {
-                settings.name = settings.audioSource.clip.name;
-            }
-
             if (settings.audioSource == null)
             {
                 Debug.LogError("AudioSource is not assigned for: " + settings.name);
                 continue;
             }
-
-            if (settings.image == null)
-            {
-                Debug.LogError("Image is not assigned for: " + settings.name);
-                continue;
-            }
-
-            if (settings.mixerGroup == null)
-            {
-                Debug.LogError("AudioMixerGroup is not assigned for: " + settings.name);
-                continue;
-            }
-
-            settings.activeImage = Instantiate(settings.image, canvas.transform);
-            settings.imageSize = settings.activeImage.rectTransform.sizeDelta;
-
         }
     }
 
@@ -51,38 +30,156 @@ public class SoundController : MonoBehaviour
     {
         foreach (var settings in audioSettings)
         {
-            AudioListener nearestListener = FindNearestAudioListener();
-            float distance = Vector3.Distance(settings.audioSource.transform.position, nearestListener.transform.position);
-            bool isWithinMaxDistance = distance < settings.maxDistance;
-            if (settings.activeImage != null && (!isWithinMaxDistance || !settings.audioSource.isPlaying || settings.audioSource.mute == true))
+            if (settings.audioSource != null)
             {
-                // Deactivate the image
-                Destroy(settings.activeImage.gameObject);
-            }
-            else if (settings.activeImage == null && (isWithinMaxDistance && settings.audioSource.isPlaying && settings.audioSource.mute == false))
-            {
-                // Instantiate the image prefab
-                settings.activeImage = Instantiate(settings.image, canvas.transform);
-                settings.imageSize = settings.activeImage.rectTransform.sizeDelta;
+                if (settings.hasAudioSource == false)
+                {
+                    InitiateAudioSource(settings);
+                    settings.hasAudioSource = true;
+                }
+                AudioListener nearestListener = FindNearestAudioListener();
+                float distance = Vector3.Distance(settings.audioSource.transform.position, nearestListener.transform.position);
+                bool isWithinMaxDistance = distance < settings.maxDistance;
+                if (settings.activeImage != null && (!isWithinMaxDistance || !settings.audioSource.isPlaying || settings.audioSource.mute == true))
+                {
+                    // Deactivate the image
+                    Destroy(settings.activeImage.gameObject);
+                }
+                else if (settings.activeImage == null && (isWithinMaxDistance && settings.audioSource.isPlaying && settings.audioSource.mute == false))
+                {
+                    // Instantiate the image prefab
+                    settings.activeImage = Instantiate(settings.image, canvas.transform);
 
-            }
-            if (settings.audioSource != null && settings.activeImage != null)
+                }
+                if (settings.audioSource != null && settings.activeImage != null)
+                {
+                    if (settings.calculateOpacityBasedOnDistance == true)
+                    {
+                        CalculateOpacityBasedOnDistance(settings);
+                    }
+                    else
+                    {
+                        CalculateOpacityBasedOnVolume(settings);
+                    }
+                    if (settings.calculateImageSizeBasedOnVolume == true)
+                    {
+                        CalculateImageSizeBasedOnVolume(settings);
+                    }
+                    else
+                    {
+                        CalculateImageSizeBasedOnDistance(settings);
+                    }
+                    WaypointIndicator(settings);
+                }
+            } else
             {
-                if (settings.calculateDistanceOpacity == true)
+                settings.hasAudioSource = false;
+            }
+        }
+    }
+
+    private void InitiateAudioSource(AudioSettings settings)
+    {
+        if (settings.nameOverride == false)
+        {
+            if (settings.audioSource.clip != null)
+            {
+                settings.name = settings.audioSource.clip.name;
+            }
+            else
+            {
+                Debug.LogError("Clip is not assigned for: " + settings);
+            }
+        }
+
+        if (settings.audioSource.outputAudioMixerGroup != null)
+        {
+            settings.mixerGroup = settings.audioSource.outputAudioMixerGroup;
+        }
+
+        if (settings.mixerGroup == null)
+        {
+            Debug.LogError("AudioMixerGroup is not assigned for: " + settings.name);
+        }
+
+        if (settings.audioSource != null)
+        {
+            settings.maxDistance = settings.audioSource.maxDistance;
+        }
+
+        if (settings.image != null)
+        {
+            settings.originalColor = settings.image.color;
+        } else
+        {
+            Debug.LogError("Image is not assigned for: " + settings.name);
+        }
+
+        if (settings.useMixerGroupData == false)
+        {
+            settings.mImageOverride = false;
+            settings.mOffsetOverride = false;
+            settings.mMinOpacityOverride = false;
+            settings.mMaxOpacityOverride = false;
+            settings.mRmsMultiplierOverride = false;
+            settings.mMaxSizeOverride = false;
+            settings.mMinSizeOverride = false;
+            settings.mCalculateOpacityBasedOnDistanceOverride = false;
+            settings.mCalculateImageSizeBasedOnVolumeOverride = false;
+        }
+
+        if (settings.useMixerGroupData == true)
+        {
+            foreach (var mixer in mixerGroupsData)
+            {
+                if (settings.mixerGroup == mixer.mixerGroup)
                 {
-                    CalculateOpacityBasedOnDistance(settings);
-                } else
-                {
-                    CalculateOpacityBasedOnVolume(settings);
+                    if (settings.mImageOverride == false)
+                    {
+                        settings.image = mixer.image;
+                    }
+
+                    if (settings.mOffsetOverride == false)
+                    {
+                        settings.offset = mixer.offset;
+                    }
+
+                    if (settings.mMinOpacityOverride == false)
+                    {
+                        settings.minOpacity = mixer.minOpacity;
+                    }
+
+                    if (settings.mMaxOpacityOverride == false)
+                    {
+                        settings.maxOpacity = mixer.maxOpacity;
+                    }
+
+                    if (settings.mRmsMultiplierOverride == false)
+                    {
+                        settings.rmsMultiplier = mixer.rmsMultiplier;
+                    }
+
+                    if (settings.mMaxSizeOverride == false)
+                    {
+                        settings.maxSize = mixer.maxSize;
+                    }
+
+                    if (settings.mMinSizeOverride == false)
+                    {
+                        settings.minSize = mixer.minSize;
+                    }
+
+                    if (settings.mCalculateOpacityBasedOnDistanceOverride == false)
+                    {
+                        settings.calculateOpacityBasedOnDistance = mixer.calculateOpacityBasedOnDistance;
+                    }
+
+                    if (settings.mCalculateImageSizeBasedOnVolumeOverride == false)
+                    {
+                        settings.calculateImageSizeBasedOnVolume = mixer.calculateImageSizeBasedOnVolume;
+                    }
+
                 }
-                if (settings.calculateImageSizeBasedOnVolume == true)
-                {
-                    CalculateImageSizeBasedOnVolume(settings);
-                } else
-                {
-                    CalculateImageSizeBasedOnDistance(settings);
-                }
-                WaypointIndicator(settings);
             }
         }
     }
@@ -161,8 +258,6 @@ public class SoundController : MonoBehaviour
 
         if (Vector3.Dot((settings.audioSource.transform.position - Camera.main.transform.position), Camera.main.transform.TransformDirection(Vector3.forward)) < 0) 
         {
-            //print(settings.name + " " + pos.x);
-            //print("Screen Width" + Screen.width);
             //Source is behind player
             if (pos.x < Screen.width / 2)
             {
@@ -197,22 +292,51 @@ public class SoundController : MonoBehaviour
 public class AudioSettings
 {
     public string name; // Name for your reference
+    public bool nameOverride;
     public AudioSource audioSource;
-    public Image image;
+    [ReadOnly]
     public AudioMixerGroup mixerGroup;
+    public Image image;
     public Vector3 offset;
     public float minOpacity = 0.2f;
     public float maxOpacity = 1.0f;
-    public float maxDistance;
     public float rmsMultiplier = 50f;
     public float maxSize = 200f;
     public float minSize = 100f;
-    public bool calculateDistanceOpacity;
+    public bool calculateOpacityBasedOnDistance;
     public bool calculateImageSizeBasedOnVolume;
+    public bool useMixerGroupData;
+    public bool mImageOverride;
+    public bool mOffsetOverride;
+    public bool mMinOpacityOverride;
+    public bool mMaxOpacityOverride;
+    public bool mRmsMultiplierOverride;
+    public bool mMaxSizeOverride;
+    public bool mMinSizeOverride;
+    public bool mCalculateOpacityBasedOnDistanceOverride;
+    public bool mCalculateImageSizeBasedOnVolumeOverride;
+
     [HideInInspector]
     public Color originalColor;
     [HideInInspector]
     public Image activeImage;
     [HideInInspector]
-    public Vector2 imageSize;
+    public bool hasAudioSource = false;
+    [HideInInspector]
+    public float maxDistance;
+}
+
+[System.Serializable]
+public class MixerGroupData
+{
+    public AudioMixerGroup mixerGroup;
+    public Image image;
+    public Vector3 offset;
+    public float minOpacity = 0.2f;
+    public float maxOpacity = 1.0f;
+    public float rmsMultiplier = 50f;
+    public float maxSize = 200f;
+    public float minSize = 100f;
+    public bool calculateOpacityBasedOnDistance;
+    public bool calculateImageSizeBasedOnVolume;
 }

@@ -449,39 +449,72 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSettings:
-  - name: 
+  - name: Hi
+    nameOverride: 1
     audioSource: {fileID: 1888504173}
-    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     mixerGroup: {fileID: 0}
+    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     offset: {x: 0, y: 20, z: 0}
     minOpacity: 0.2
     maxOpacity: 1
-    maxDistance: 100
     rmsMultiplier: 1
     maxSize: 200
     minSize: 20
-    calculateDistanceOpacity: 1
-    calculateImageSizeBasedOnVolume: 1
-    originalColor: {r: 0, g: 0, b: 0, a: 0}
-    activeImage: {fileID: 0}
-    imageSize: {x: 40, y: 10}
-  - name: 
-    audioSource: {fileID: 1293198767}
-    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
-    mixerGroup: {fileID: 0}
-    offset: {x: 0, y: 20, z: 0}
-    minOpacity: 0.2
-    maxOpacity: 1
-    maxDistance: 100
-    rmsMultiplier: 1
-    maxSize: 200
-    minSize: 20
-    calculateDistanceOpacity: 1
+    calculateOpacityBasedOnDistance: 0
     calculateImageSizeBasedOnVolume: 0
+    useMixerGroupData: 1
+    mImageOverride: 0
+    mOffsetOverride: 0
+    mMinOpacityOverride: 0
+    mMaxOpacityOverride: 0
+    mRmsMultiplierOverride: 0
+    mMaxSizeOverride: 0
+    mMinSizeOverride: 0
+    mCalculateOpacityBasedOnDistanceOverride: 0
+    mCalculateImageSizeBasedOnVolumeOverride: 0
     originalColor: {r: 0, g: 0, b: 0, a: 0}
     activeImage: {fileID: 0}
-    imageSize: {x: 0, y: 0}
+    hasAudioSource: 0
+    maxDistance: 100
+  - name: 
+    nameOverride: 0
+    audioSource: {fileID: 1293198767}
+    mixerGroup: {fileID: 0}
+    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
+    offset: {x: 0, y: 20, z: 0}
+    minOpacity: 0.2
+    maxOpacity: 1
+    rmsMultiplier: 1
+    maxSize: 200
+    minSize: 20
+    calculateOpacityBasedOnDistance: 0
+    calculateImageSizeBasedOnVolume: 0
+    useMixerGroupData: 0
+    mImageOverride: 0
+    mOffsetOverride: 0
+    mMinOpacityOverride: 0
+    mMaxOpacityOverride: 0
+    mRmsMultiplierOverride: 0
+    mMaxSizeOverride: 0
+    mMinSizeOverride: 0
+    mCalculateOpacityBasedOnDistanceOverride: 0
+    mCalculateImageSizeBasedOnVolumeOverride: 0
+    originalColor: {r: 0, g: 0, b: 0, a: 0}
+    activeImage: {fileID: 0}
+    hasAudioSource: 0
+    maxDistance: 20
   canvas: {fileID: 696004148}
+  mixerGroupsData:
+  - mixerGroup: {fileID: 1537621754727990451, guid: 4eedf0d7fb7a6d04fb6e82c68b762a98, type: 2}
+    image: {fileID: 2889297567894138873, guid: 07bf40237e2020b45bb5548e42d452fd, type: 3}
+    offset: {x: 0, y: 10, z: 0}
+    minOpacity: 0.3
+    maxOpacity: 0.9
+    rmsMultiplier: 10
+    maxSize: 400
+    minSize: 100
+    calculateOpacityBasedOnDistance: 1
+    calculateImageSizeBasedOnVolume: 1
 --- !u!4 &471325588
 Transform:
   m_ObjectHideFlags: 0
@@ -1204,7 +1237,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7464441533406877781, guid: e4d5fab70c5331049a0b80c32594b066, type: 3}
       propertyPath: Mute
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7464441533406877781, guid: e4d5fab70c5331049a0b80c32594b066, type: 3}
       propertyPath: m_audioClip
@@ -1504,7 +1537,7 @@ PrefabInstance:
     - target: {fileID: 7464441533406877781, guid: e4d5fab70c5331049a0b80c32594b066, type: 3}
       propertyPath: OutputAudioMixerGroup
       value: 
-      objectReference: {fileID: 851094903304376454, guid: 4eedf0d7fb7a6d04fb6e82c68b762a98, type: 2}
+      objectReference: {fileID: 1537621754727990451, guid: 4eedf0d7fb7a6d04fb6e82c68b762a98, type: 2}
     - target: {fileID: 7464441533406877782, guid: e4d5fab70c5331049a0b80c32594b066, type: 3}
       propertyPath: m_RootOrder
       value: 2

@@ -448,62 +448,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57219e304cd87384fac69534cf81d175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSettings:
-  - name: Hi
-    nameOverride: 1
-    audioSource: {fileID: 1888504173}
-    mixerGroup: {fileID: 0}
-    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
-    offset: {x: 0, y: 20, z: 0}
-    minOpacity: 0.2
-    maxOpacity: 1
-    rmsMultiplier: 1
-    maxSize: 200
-    minSize: 20
-    calculateOpacityBasedOnDistance: 0
-    calculateImageSizeBasedOnVolume: 0
-    useMixerGroupData: 1
-    mImageOverride: 0
-    mOffsetOverride: 0
-    mMinOpacityOverride: 0
-    mMaxOpacityOverride: 0
-    mRmsMultiplierOverride: 0
-    mMaxSizeOverride: 0
-    mMinSizeOverride: 0
-    mCalculateOpacityBasedOnDistanceOverride: 0
-    mCalculateImageSizeBasedOnVolumeOverride: 0
-    originalColor: {r: 0, g: 0, b: 0, a: 0}
-    activeImage: {fileID: 0}
-    hasAudioSource: 0
-    maxDistance: 100
-  - name: 
-    nameOverride: 0
-    audioSource: {fileID: 1293198767}
-    mixerGroup: {fileID: 0}
-    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
-    offset: {x: 0, y: 20, z: 0}
-    minOpacity: 0.2
-    maxOpacity: 1
-    rmsMultiplier: 1
-    maxSize: 200
-    minSize: 20
-    calculateOpacityBasedOnDistance: 0
-    calculateImageSizeBasedOnVolume: 0
-    useMixerGroupData: 0
-    mImageOverride: 0
-    mOffsetOverride: 0
-    mMinOpacityOverride: 0
-    mMaxOpacityOverride: 0
-    mRmsMultiplierOverride: 0
-    mMaxSizeOverride: 0
-    mMinSizeOverride: 0
-    mCalculateOpacityBasedOnDistanceOverride: 0
-    mCalculateImageSizeBasedOnVolumeOverride: 0
-    originalColor: {r: 0, g: 0, b: 0, a: 0}
-    activeImage: {fileID: 0}
-    hasAudioSource: 0
-    maxDistance: 20
-  canvas: {fileID: 696004148}
+  mainCanvas: {fileID: 696004148}
+  mainCamera: {fileID: 0}
+  enableController: 0
   mixerGroupsData:
   - mixerGroup: {fileID: 1537621754727990451, guid: 4eedf0d7fb7a6d04fb6e82c68b762a98, type: 2}
     image: {fileID: 2889297567894138873, guid: 07bf40237e2020b45bb5548e42d452fd, type: 3}
@@ -515,6 +462,61 @@ MonoBehaviour:
     minSize: 100
     calculateOpacityBasedOnDistance: 1
     calculateImageSizeBasedOnVolume: 1
+  audioSettings:
+  - name: Hi
+    nameOverride: 1
+    audioSource: {fileID: 1888504173}
+    mixerGroup: {fileID: 0}
+    useMixerGroupData: 1
+    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
+    mImageOverride: 0
+    offset: {x: 0, y: 20, z: 0}
+    mOffsetOverride: 0
+    minOpacity: 0.2
+    mMinOpacityOverride: 0
+    maxOpacity: 1
+    mMaxOpacityOverride: 0
+    rmsMultiplier: 1
+    mRmsMultiplierOverride: 0
+    maxSize: 200
+    mMaxSizeOverride: 0
+    minSize: 20
+    mMinSizeOverride: 0
+    calculateOpacityBasedOnDistance: 0
+    mCalculateOpacityBasedOnDistanceOverride: 0
+    calculateImageSizeBasedOnVolume: 0
+    mCalculateImageSizeBasedOnVolumeOverride: 0
+    originalColor: {r: 0, g: 0, b: 0, a: 0}
+    activeImage: {fileID: 0}
+    hasAudioSourceImage: 0
+    maxDistance: 100
+  - name: 
+    nameOverride: 0
+    audioSource: {fileID: 1293198767}
+    mixerGroup: {fileID: 0}
+    useMixerGroupData: 0
+    image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
+    mImageOverride: 0
+    offset: {x: 0, y: 20, z: 0}
+    mOffsetOverride: 0
+    minOpacity: 0.2
+    mMinOpacityOverride: 0
+    maxOpacity: 1
+    mMaxOpacityOverride: 0
+    rmsMultiplier: 1
+    mRmsMultiplierOverride: 0
+    maxSize: 200
+    mMaxSizeOverride: 0
+    minSize: 20
+    mMinSizeOverride: 0
+    calculateOpacityBasedOnDistance: 0
+    mCalculateOpacityBasedOnDistanceOverride: 0
+    calculateImageSizeBasedOnVolume: 0
+    mCalculateImageSizeBasedOnVolumeOverride: 0
+    originalColor: {r: 0, g: 0, b: 0, a: 0}
+    activeImage: {fileID: 0}
+    hasAudioSourceImage: 0
+    maxDistance: 20
 --- !u!4 &471325588
 Transform:
   m_ObjectHideFlags: 0

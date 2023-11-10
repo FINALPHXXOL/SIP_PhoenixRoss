@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEditor.Experimental.Rendering;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -29,51 +30,65 @@ namespace AudioVisualCues
             {
                 foreach (var settings in audioSettings)
                 {
-                    if (settings.audioSource != null && settings.image)
+                    if (settings.enableSetting == true)
                     {
-                        if (settings.hasAudioSourceImage == false)
+                        if (settings.audioSource != null && settings.image)
                         {
-                            InitiateAudioSource(settings);
-                            settings.hasAudioSourceImage = true;
-                        }
-                        AudioListener nearestListener = FindNearestAudioListener();
-                        float distance = Vector3.Distance(settings.audioSource.transform.position, nearestListener.transform.position);
-                        bool isWithinMaxDistance = distance < settings.maxDistance;
-                        if (settings.activeImage != null && (!isWithinMaxDistance || !settings.audioSource.isPlaying || settings.audioSource.mute == true))
-                        {
-                            // Deactivate the image
-                            Destroy(settings.activeImage.gameObject);
-                        }
-                        else if (settings.activeImage == null && (isWithinMaxDistance && settings.audioSource.isPlaying && settings.audioSource.mute == false))
-                        {
-                            //Instantiate the image prefab
-                            settings.activeImage = Instantiate(settings.image, mainCanvas.transform);
+                            if (settings.hasAudioSourceImage == false)
+                            {
+                                InitiateAudioSource(settings);
+                                settings.hasAudioSourceImage = true;
+                            }
 
+                            AudioListener nearestListener = FindNearestAudioListener();
+                            float distance = Vector3.Distance(settings.audioSource.transform.position, nearestListener.transform.position);
+                            bool isWithinMaxDistance = distance < settings.maxDistance;
+
+
+                            if (settings.activeImage == null && (isWithinMaxDistance && settings.audioSource.isPlaying && !settings.audioSource.mute))
+                            {
+                                //Instantiate the image prefab
+                                settings.activeImage = Instantiate(settings.image, mainCanvas.transform);
+                            }
+                            else if ((settings.activeImage != null && (!isWithinMaxDistance || !settings.audioSource.isPlaying || settings.audioSource.mute)))
+                            {
+                                // Deactivate the image
+                                Destroy(settings.activeImage.gameObject);
+                            }
+
+                            if (settings.audioSource != null && settings.activeImage != null)
+                            {
+                                if (settings.calculateOpacityBasedOnDistance == true)
+                                {
+                                    CalculateOpacityBasedOnDistance(settings);
+                                }
+                                else
+                                {
+                                    CalculateOpacityBasedOnVolume(settings);
+                                }
+                                if (settings.calculateImageSizeBasedOnVolume == true)
+                                {
+                                    CalculateImageSizeBasedOnVolume(settings);
+                                }
+                                else
+                                {
+                                    CalculateImageSizeBasedOnDistance(settings);
+                                }
+                                WaypointIndicator(settings);
+                            }
                         }
-                        if (settings.audioSource != null && settings.activeImage != null)
+                        else
                         {
-                            if (settings.calculateOpacityBasedOnDistance == true)
-                            {
-                                CalculateOpacityBasedOnDistance(settings);
-                            }
-                            else
-                            {
-                                CalculateOpacityBasedOnVolume(settings);
-                            }
-                            if (settings.calculateImageSizeBasedOnVolume == true)
-                            {
-                                CalculateImageSizeBasedOnVolume(settings);
-                            }
-                            else
-                            {
-                                CalculateImageSizeBasedOnDistance(settings);
-                            }
-                            WaypointIndicator(settings);
+                            settings.hasAudioSourceImage = false;
                         }
                     }
                     else
                     {
-                        settings.hasAudioSourceImage = false;
+                        if (settings.activeImage != null)
+                        {
+                            // Deactivate the image
+                            Destroy(settings.activeImage.gameObject);
+                        }
                     }
                 }
             }
@@ -90,15 +105,30 @@ namespace AudioVisualCues
             }
         }
 
+        public void Redraw()
+        {
+            foreach (var settings in audioSettings)
+            {
+                if (settings.audioSource != null && settings.image)
+                {
+                    InitiateAudioSource(settings);
+                    settings.hasAudioSourceImage = true;
+                }
+            }
+        }
+
         private void InitiateAudioSource(AudioSettings settings)
         {
-            if (settings.nameOverride == false)
-            {
-                if (settings.audioSource.clip != null)
-                {
-                    settings.name = settings.audioSource.clip.name;
-                }
 
+            if (settings.activeImage != null)
+            {
+                // Deactivate the image
+                Destroy(settings.activeImage.gameObject);
+            }
+
+            if (string.IsNullOrEmpty(settings.name))
+            {
+                settings.name = settings.audioSource.clip.name;
             }
 
             if (settings.audioSource.outputAudioMixerGroup != null)
@@ -296,8 +326,8 @@ namespace AudioVisualCues
     [System.Serializable]
     public class AudioSettings
     {
+        public bool enableSetting = true;
         public string name; // Name for your reference
-        public bool nameOverride;
         public AudioSource audioSource;
         [ReadOnly]
         public AudioMixerGroup mixerGroup;
@@ -323,7 +353,7 @@ namespace AudioVisualCues
         public bool mCalculateImageSizeBasedOnVolumeOverride;
         [HideInInspector]
         public Color originalColor;
-        [HideInInspector]
+        //[HideInInspector]
         public Image activeImage;
         [HideInInspector]
         public bool hasAudioSourceImage = false;

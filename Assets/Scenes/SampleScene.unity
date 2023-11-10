@@ -450,7 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCanvas: {fileID: 696004148}
   mainCamera: {fileID: 0}
-  enableController: 0
+  enableController: 1
   mixerGroupsData:
   - mixerGroup: {fileID: 1537621754727990451, guid: 4eedf0d7fb7a6d04fb6e82c68b762a98, type: 2}
     image: {fileID: 2889297567894138873, guid: 07bf40237e2020b45bb5548e42d452fd, type: 3}
@@ -463,8 +463,8 @@ MonoBehaviour:
     calculateOpacityBasedOnDistance: 1
     calculateImageSizeBasedOnVolume: 1
   audioSettings:
-  - name: Hi
-    nameOverride: 1
+  - enableSetting: 1
+    name: 
     audioSource: {fileID: 1888504173}
     mixerGroup: {fileID: 0}
     useMixerGroupData: 1
@@ -490,8 +490,8 @@ MonoBehaviour:
     activeImage: {fileID: 0}
     hasAudioSourceImage: 0
     maxDistance: 100
-  - name: 
-    nameOverride: 0
+  - enableSetting: 1
+    name: 
     audioSource: {fileID: 1293198767}
     mixerGroup: {fileID: 0}
     useMixerGroupData: 0

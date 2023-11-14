@@ -217,7 +217,7 @@ namespace AudioVisualCues
         private void CalculateOpacityBasedOnVolume(AudioSettings settings)
         {
             float[] samples = new float[256];
-            AudioListener.GetOutputData(samples, 1); // Use channel 1 (1-based index) for the custom mixer group
+            settings.audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris); // Use BlackmanHarris for better results
 
             float sum = 0f;
             foreach (float sample in samples)
@@ -250,7 +250,7 @@ namespace AudioVisualCues
         private void CalculateImageSizeBasedOnVolume(AudioSettings settings)
         {
             float[] samples = new float[256];
-            AudioListener.GetOutputData(samples, 1); // Use channel 1 (1-based index) for the custom mixer group
+            settings.audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris); // Use BlackmanHarris for better results
 
             float sum = 0f;
             foreach (float sample in samples)

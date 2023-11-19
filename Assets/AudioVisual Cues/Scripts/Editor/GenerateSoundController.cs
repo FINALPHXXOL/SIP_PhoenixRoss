@@ -41,13 +41,6 @@ namespace AudioVisualCues
 
         private void OnWizardCreate()
         {
-            if (mainCanvas == null)
-            {
-                // Display a dialog informing the user that they need to assign mainCanvas
-                EditorUtility.DisplayDialog("Canvas Not Assigned", "Please assign a Canvas before creating the Sound Controller.", "OK");
-                return; // Do not proceed further
-            }
-
             //Create an empty gamobject
             GameObject soundController = new GameObject();
 

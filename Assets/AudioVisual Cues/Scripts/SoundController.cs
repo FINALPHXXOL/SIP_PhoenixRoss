@@ -27,7 +27,7 @@ namespace AudioVisualCues
 
         private void Update()
         {
-            if (enableController == true && mainCanvas != null) 
+            if (enableController == true && mainCanvas != null && mainCamera != null) 
             {
                 foreach (var settings in audioSettings) 
                 {
@@ -324,11 +324,6 @@ namespace AudioVisualCues
             float maxX = Screen.width - minX;
             float minY = settings.activeImage.GetPixelAdjustedRect().height / 2;
             float maxY = Screen.height - minY;
-            
-            if (mainCamera == null)
-            {
-                mainCamera = Camera.main;
-            }
 
             Vector2 pos = mainCamera.WorldToScreenPoint(settings.audioSource.transform.position + settings.offset);
 

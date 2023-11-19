@@ -536,12 +536,22 @@ MonoBehaviour:
     minSize: 100
     calculateOpacityBasedOnDistance: 1
     calculateImageSizeBasedOnVolume: 1
+  - mixerGroup: {fileID: 851094903304376454, guid: 4eedf0d7fb7a6d04fb6e82c68b762a98, type: 2}
+    image: {fileID: 2106862567621067682, guid: 4a1d5df81544e7742bd775c7ba20c362, type: 3}
+    offset: {x: 0, y: 10, z: 0}
+    minOpacity: 0.3
+    maxOpacity: 0.9
+    rmsMultiplier: 10
+    maxSize: 400
+    minSize: 100
+    calculateOpacityBasedOnDistance: 1
+    calculateImageSizeBasedOnVolume: 1
   audioSettings:
   - enableSetting: 1
     name: 
     audioSource: {fileID: 1888504173}
     mixerGroup: {fileID: 0}
-    useMixerGroupData: 0
+    useMixerGroupData: 1
     image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     mImageOverride: 0
     offset: {x: 0, y: 20, z: 0}
@@ -568,7 +578,7 @@ MonoBehaviour:
     name: 
     audioSource: {fileID: 1293198767}
     mixerGroup: {fileID: 0}
-    useMixerGroupData: 0
+    useMixerGroupData: 1
     image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     mImageOverride: 0
     offset: {x: 0, y: 20, z: 0}
@@ -595,7 +605,7 @@ MonoBehaviour:
     name: 
     audioSource: {fileID: 1665373342}
     mixerGroup: {fileID: 0}
-    useMixerGroupData: 0
+    useMixerGroupData: 1
     image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     mImageOverride: 0
     offset: {x: 0, y: 20, z: 0}
@@ -622,7 +632,7 @@ MonoBehaviour:
     name: 
     audioSource: {fileID: 620146456}
     mixerGroup: {fileID: 0}
-    useMixerGroupData: 0
+    useMixerGroupData: 1
     image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     mImageOverride: 0
     offset: {x: 0, y: 20, z: 0}
@@ -649,7 +659,7 @@ MonoBehaviour:
     name: 
     audioSource: {fileID: 393942359}
     mixerGroup: {fileID: 0}
-    useMixerGroupData: 0
+    useMixerGroupData: 1
     image: {fileID: 2106862567621067682, guid: 787dc32e46b6c1f459f0477d99fbee13, type: 3}
     mImageOverride: 0
     offset: {x: 0, y: 20, z: 0}
